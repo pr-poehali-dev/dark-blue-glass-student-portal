@@ -50,15 +50,15 @@ const assignments = [
 ];
 
 const statusMap = {
-  pending: { label: "К выполнению", color: "text-orange-300 bg-orange-500/10 border-orange-500/25" },
-  in_progress: { label: "В процессе", color: "text-blue-300 bg-blue-500/10 border-blue-500/25" },
-  done: { label: "Сдано", color: "text-green-300 bg-green-500/10 border-green-500/25" },
+  pending: { label: "К выполнению", color: "bg-orange-50 text-orange-700 border-orange-200" },
+  in_progress: { label: "В процессе", color: "bg-blue-50 text-blue-700 border-blue-200" },
+  done: { label: "Сдано", color: "bg-green-50 text-green-700 border-green-200" },
 };
 
-const priorityMap = {
-  high: { label: "Срочно", dot: "bg-red-400" },
-  medium: { label: "Обычный", dot: "bg-yellow-400" },
-  low: { label: "Низкий", dot: "bg-green-400" },
+const priorityDot = {
+  high: "bg-red-400",
+  medium: "bg-yellow-400",
+  low: "bg-green-400",
 };
 
 type FilterType = "all" | "pending" | "in_progress" | "done";
@@ -77,60 +77,59 @@ export default function AssignmentsTab() {
   return (
     <div className="animate-fade-in">
       <div className="mb-6">
-        <h2 className="text-2xl font-montserrat font-bold text-white mb-1">Задания</h2>
-        <p className="text-muted-foreground text-sm">Все задания и дедлайны</p>
+        <h2 className="text-xl font-bold text-gray-900 mb-0.5">Задания</h2>
+        <p className="text-gray-400 text-sm">Все задания и дедлайны</p>
       </div>
 
       {/* Фильтры */}
-      <div className="flex gap-2 flex-wrap mb-6">
+      <div className="flex gap-1.5 flex-wrap mb-5">
         {(["all", "pending", "in_progress", "done"] as FilterType[]).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-all ${
               filter === f
-                ? "bg-blue-500/20 border-blue-500/40 text-blue-300"
-                : "glass border-white/8 text-muted-foreground hover:text-white"
+                ? "bg-blue-700 text-white border-blue-700 shadow-sm"
+                : "bg-white text-gray-500 border-gray-200 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
             {f === "all" ? "Все" : statusMap[f].label}
-            <span className="ml-2 text-xs opacity-60">({counts[f]})</span>
+            <span className="ml-1.5 text-xs opacity-60">({counts[f]})</span>
           </button>
         ))}
       </div>
 
-      {/* Список заданий */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {filtered.map((task, i) => (
           <div
             key={task.id}
-            className={`glass glass-hover rounded-2xl p-5 animate-fade-in ${
-              task.status === "done" ? "opacity-60" : ""
+            className={`bg-white border border-gray-100 rounded-2xl p-5 card-clean-hover animate-fade-in ${
+              task.status === "done" ? "opacity-50" : ""
             }`}
-            style={{ animationDelay: `${i * 0.08}s`, opacity: 0 }}
+            style={{ animationDelay: `${i * 0.07}s`, opacity: 0 }}
           >
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <span className="text-xs font-medium text-blue-400/80 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
+                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                  <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
                     {task.subject}
                   </span>
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <span className={`w-1.5 h-1.5 rounded-full ${priorityMap[task.priority].dot}`} />
-                    {priorityMap[task.priority].label}
+                  <span className="flex items-center gap-1 text-xs text-gray-400">
+                    <span className={`w-1.5 h-1.5 rounded-full ${priorityDot[task.priority]}`} />
+                    {task.priority === "high" ? "Срочно" : task.priority === "medium" ? "Обычный" : "Низкий"}
                   </span>
                 </div>
-                <h3 className={`font-semibold text-sm leading-snug ${task.status === "done" ? "line-through text-muted-foreground" : "text-white"}`}>
+                <h3 className={`font-semibold text-sm leading-snug ${task.status === "done" ? "line-through text-gray-400" : "text-gray-900"}`}>
                   {task.title}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{task.description}</p>
+                <p className="text-xs text-gray-400 mt-1 leading-relaxed">{task.description}</p>
               </div>
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                <span className={`text-xs px-2.5 py-1 rounded-lg border font-medium ${statusMap[task.status].color}`}>
+                <span className={`text-[11px] px-2.5 py-1 rounded-lg border font-semibold ${statusMap[task.status].color}`}>
                   {statusMap[task.status].label}
                 </span>
-                <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Icon name="Calendar" size={12} />
+                <span className="flex items-center gap-1 text-xs text-gray-400">
+                  <Icon name="Calendar" size={11} />
                   {task.deadline}
                 </span>
               </div>

@@ -35,61 +35,57 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   };
 
   return (
-    <div className="min-h-screen flex relative">
-      {/* Орбы */}
-      <div className="bg-orb w-96 h-96 bg-blue-700" style={{ top: "10%", left: "15%" }} />
-      <div className="bg-orb w-72 h-72 bg-indigo-700" style={{ bottom: "10%", right: "5%" }} />
-
-      {/* Сетка */}
-      <div className="absolute inset-0 z-0 pointer-events-none" style={{
-        backgroundImage: `linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px)`,
-        backgroundSize: "60px 60px"
-      }} />
+    <div className="min-h-screen flex bg-[#f7f8fa]">
 
       {/* Сайдбар */}
-      <aside className="relative z-10 w-64 flex-shrink-0 hidden md:flex flex-col py-6 px-4 border-r border-white/8">
+      <aside className="w-60 flex-shrink-0 hidden md:flex flex-col bg-white border-r border-gray-100 py-6 px-4">
         {/* Лого */}
-        <div className="flex items-center gap-3 px-2 mb-8 animate-fade-in">
-          <div className="w-9 h-9 rounded-xl glass flex items-center justify-center glow-blue">
-            <Icon name="GraduationCap" size={20} className="text-blue-400" />
+        <div className="flex items-center gap-2.5 px-2 mb-8 animate-fade-in">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, #1a3a6b, #1e4da1)" }}
+          >
+            <Icon name="GraduationCap" size={16} className="text-white" />
           </div>
           <div>
-            <div className="text-white font-montserrat font-bold text-sm leading-none">СтудПортал</div>
-            <div className="text-muted-foreground text-xs mt-0.5">Личный кабинет</div>
+            <div className="text-gray-900 font-bold text-sm leading-none">СтудПортал</div>
+            <div className="text-gray-400 text-[11px] mt-0.5">Личный кабинет</div>
           </div>
         </div>
 
-        {/* Аватар в сайдбаре */}
-        <div className="glass rounded-2xl p-4 mb-6 flex items-center gap-3 animate-fade-in stagger-1">
+        {/* Карточка студента */}
+        <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 mb-6 flex items-center gap-3 animate-fade-in stagger-1">
           <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-            style={{ background: "linear-gradient(135deg, #3b82f6, #0ea5e9)" }}
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+            style={{ background: "linear-gradient(135deg, #1a3a6b, #1e4da1)" }}
           >
             {user.avatar}
           </div>
           <div className="min-w-0">
-            <div className="text-white text-sm font-semibold truncate">{user.name.split(" ")[0]} {user.name.split(" ")[1]?.[0]}.</div>
-            <div className="text-muted-foreground text-xs">Гр. {user.group}</div>
+            <div className="text-gray-900 text-sm font-semibold truncate">{user.name.split(" ")[0]} {user.name.split(" ")[1]?.[0]}.</div>
+            <div className="text-gray-400 text-[11px]">Гр. {user.group}</div>
           </div>
         </div>
 
         {/* Навигация */}
-        <nav className="flex-1 space-y-1">
+        <nav className="flex-1 space-y-0.5">
           {navItems.map((item, i) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium border transition-all animate-fade-in ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all animate-fade-in ${
                 activeTab === item.id
-                  ? "nav-active border-blue-500/25"
-                  : "text-muted-foreground border-transparent hover:text-white hover:bg-white/5"
+                  ? "nav-active-light"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               }`}
               style={{ animationDelay: `${i * 0.05}s`, opacity: 0 }}
             >
-              <Icon name={item.icon} fallback="Circle" size={18} />
+              <Icon name={item.icon} fallback="Circle" size={17} />
               <span className="flex-1 text-left">{item.label}</span>
               {item.badge && (
-                <span className="w-5 h-5 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
+                <span className={`w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center ${
+                  activeTab === item.id ? "bg-white/25 text-white" : "bg-blue-100 text-blue-600"
+                }`}>
                   {item.badge}
                 </span>
               )}
@@ -97,42 +93,43 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
           ))}
         </nav>
 
-        {/* Нижняя часть */}
-        <div className="pt-4 border-t border-white/8 mt-4 animate-fade-in stagger-6">
-          <div className="glass rounded-xl p-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-2 mb-2">
-              <Icon name="Sparkles" size={12} className="text-blue-400" />
-              <span className="text-white/70 font-medium">Весенний семестр</span>
+        {/* Плашка внизу */}
+        <div className="pt-4 border-t border-gray-100 mt-4 animate-fade-in stagger-6">
+          <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Icon name="CalendarClock" size={13} className="text-blue-600" />
+              <span className="text-blue-800 font-semibold">Весенний семестр</span>
             </div>
-            <div className="text-xs">До сессии: <span className="text-orange-300 font-semibold">38 дней</span></div>
+            <div className="text-blue-600/70">До сессии: <span className="text-orange-500 font-semibold">38 дней</span></div>
           </div>
         </div>
       </aside>
 
-      {/* Контент */}
-      <main className="flex-1 relative z-10 flex flex-col min-h-screen overflow-hidden">
+      {/* Основной контент */}
+      <main className="flex-1 flex flex-col min-h-screen overflow-hidden">
         {/* Шапка */}
-        <header className="flex items-center justify-between px-6 py-4 border-b border-white/8 glass-hover">
+        <header className="bg-white border-b border-gray-100 flex items-center justify-between px-6 py-4">
           <div>
-            <h1 className="text-white font-montserrat font-semibold text-lg">
+            <h1 className="text-gray-900 font-bold text-lg leading-none">
               {navItems.find((n) => n.id === activeTab)?.label}
             </h1>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-gray-400 text-xs mt-0.5 capitalize">
               {new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <button className="w-9 h-9 glass rounded-xl flex items-center justify-center text-muted-foreground hover:text-white transition-colors relative">
-              <Icon name="Bell" size={18} />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-blue-400" />
+          <div className="flex items-center gap-2">
+            <button className="w-9 h-9 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-all relative">
+              <Icon name="Bell" size={17} />
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-blue-500" />
             </button>
+            {/* Мобильный аватар */}
             <button
-              className="flex items-center gap-2 glass glass-hover rounded-xl px-3 py-2 border border-white/10 md:hidden"
+              className="md:hidden flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-2 text-gray-600 hover:border-gray-300 transition-all"
               onClick={onLogout}
             >
               <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white"
-                style={{ background: "linear-gradient(135deg, #3b82f6, #0ea5e9)" }}
+                className="w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-bold text-white"
+                style={{ background: "linear-gradient(135deg, #1a3a6b, #1e4da1)" }}
               >
                 {user.avatar}
               </div>
@@ -140,28 +137,28 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
           </div>
         </header>
 
-        {/* Основной контент */}
+        {/* Контент */}
         <div className="flex-1 p-6 overflow-y-auto">
           <div className="max-w-3xl mx-auto">
             {renderTab()}
           </div>
         </div>
 
-        {/* Нижняя навигация (мобильная) */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-20 glass border-t border-white/10 px-2 py-3">
+        {/* Мобильная навигация */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-100 px-2 py-2 pb-safe">
           <div className="flex items-center justify-around">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all relative ${
-                  activeTab === item.id ? "text-blue-400" : "text-muted-foreground"
+                className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all relative ${
+                  activeTab === item.id ? "text-blue-700" : "text-gray-400"
                 }`}
               >
                 <Icon name={item.icon} fallback="Circle" size={20} />
                 <span className="text-[10px] font-medium">{item.label.split(" ")[0]}</span>
                 {item.badge && (
-                  <span className="absolute top-0 right-2 w-4 h-4 rounded-full bg-blue-500 text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="absolute top-0.5 right-1 w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center">
                     {item.badge}
                   </span>
                 )}

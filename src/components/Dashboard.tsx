@@ -1,8 +1,6 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
 import ScheduleTab from "./dashboard/ScheduleTab";
-import NotificationsTab from "./dashboard/NotificationsTab";
-import AssignmentsTab from "./dashboard/AssignmentsTab";
 import WorksTab from "./dashboard/WorksTab";
 import ProfileTab from "./dashboard/ProfileTab";
 
@@ -11,12 +9,10 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
-type Tab = "schedule" | "notifications" | "assignments" | "works" | "profile";
+type Tab = "schedule" | "works" | "profile";
 
-const navItems: { id: Tab; label: string; icon: string; badge?: number }[] = [
-  { id: "schedule", label: "Расписание", icon: "CalendarDays" },
-  { id: "notifications", label: "Уведомления", icon: "Bell", badge: 3 },
-  { id: "assignments", label: "Задания", icon: "ClipboardList", badge: 2 },
+const navItems: { id: Tab; label: string; icon: string }[] = [
+  { id: "schedule", label: "Предметы", icon: "BookOpen" },
   { id: "works", label: "Мои работы", icon: "FolderOpen" },
   { id: "profile", label: "Профиль", icon: "User" },
 ];
@@ -26,9 +22,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
 
   const renderTab = () => {
     switch (activeTab) {
-      case "schedule": return <ScheduleTab group={user.group} />;
-      case "notifications": return <NotificationsTab />;
-      case "assignments": return <AssignmentsTab />;
+      case "schedule": return <ScheduleTab />;
       case "works": return <WorksTab />;
       case "profile": return <ProfileTab user={user} onLogout={onLogout} />;
     }
@@ -88,11 +82,6 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
             >
               <Icon name={item.icon} fallback="Circle" size={18} />
               <span className="flex-1 text-left">{item.label}</span>
-              {item.badge && (
-                <span className="w-5 h-5 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
-                  {item.badge}
-                </span>
-              )}
             </button>
           ))}
         </nav>
@@ -100,11 +89,10 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         {/* Нижняя часть */}
         <div className="pt-4 border-t border-white/8 mt-4 animate-fade-in stagger-6">
           <div className="glass rounded-xl p-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-2 mb-2">
-              <Icon name="Sparkles" size={12} className="text-blue-400" />
-              <span className="text-white/70 font-medium">Весенний семестр</span>
+            <div className="flex items-center gap-2">
+              <Icon name="GraduationCap" size={12} className="text-blue-400" />
+              <span className="text-white/70 font-medium">{user.group}</span>
             </div>
-            <div className="text-xs">До сессии: <span className="text-orange-300 font-semibold">38 дней</span></div>
           </div>
         </div>
       </aside>
@@ -154,17 +142,12 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all relative ${
+                className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all ${
                   activeTab === item.id ? "text-blue-400" : "text-muted-foreground"
                 }`}
               >
                 <Icon name={item.icon} fallback="Circle" size={20} />
                 <span className="text-[10px] font-medium">{item.label.split(" ")[0]}</span>
-                {item.badge && (
-                  <span className="absolute top-0 right-2 w-4 h-4 rounded-full bg-blue-500 text-white text-[9px] font-bold flex items-center justify-center">
-                    {item.badge}
-                  </span>
-                )}
               </button>
             ))}
           </div>

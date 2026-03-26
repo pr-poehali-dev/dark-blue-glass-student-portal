@@ -6,8 +6,7 @@ export interface User {
   name: string;
   group: string;
   email: string;
-  role: "student" | "admin";
-  avatar: string;
+  avatar: string;   // вычисляется на фронте из initials(name), бек не возвращает
 }
 
 // POST /auth/register

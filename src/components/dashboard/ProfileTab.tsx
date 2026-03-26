@@ -1,28 +1,15 @@
 import Icon from "@/components/ui/icon";
 
 interface ProfileTabProps {
-  user: { name: string; group: string; avatar: string };
+  user: { id?: number; name: string; group: string; email?: string; avatar: string };
   onLogout: () => void;
 }
 
-const stats = [
-  { label: "Средний балл", value: "4.7", icon: "Star", color: "text-yellow-400" },
-  { label: "Работ сдано", value: "32", icon: "FileCheck", color: "text-green-400" },
-  { label: "Пропусков", value: "3", icon: "AlertCircle", color: "text-orange-400" },
-  { label: "Семестр", value: "6-й", icon: "BookOpen", color: "text-blue-400" },
-];
-
-const info = [
-  { label: "Университет", value: "МГТУ им. Баумана" },
-  { label: "Факультет", value: "Информатика и системы управления" },
-  { label: "Кафедра", value: "ИУ-3 · Информационные технологии" },
-  { label: "Группа", value: "ИТ-301" },
-  { label: "Форма обучения", value: "Очная" },
-  { label: "Email", value: "morozov@student.bmstu.ru" },
-  { label: "Студенческий билет", value: "№ 2021-04-3015" },
-];
-
 export default function ProfileTab({ user, onLogout }: ProfileTabProps) {
+  const info = [
+    { label: "Группа", value: user.group },
+    { label: "Email", value: user.email ?? "—" },
+  ];
   return (
     <div className="animate-fade-in">
       <div className="mb-6">
@@ -59,21 +46,6 @@ export default function ProfileTab({ user, onLogout }: ProfileTabProps) {
           <Icon name="Pencil" size={14} />
           Редактировать
         </button>
-      </div>
-
-      {/* Статистика */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        {stats.map((s, i) => (
-          <div
-            key={s.label}
-            className="glass glass-hover rounded-2xl p-4 text-center animate-fade-in"
-            style={{ animationDelay: `${i * 0.07}s`, opacity: 0 }}
-          >
-            <Icon name={s.icon} fallback="Info" size={20} className={`${s.color} mx-auto mb-2`} />
-            <div className="text-2xl font-montserrat font-bold text-white">{s.value}</div>
-            <div className="text-xs text-muted-foreground mt-0.5">{s.label}</div>
-          </div>
-        ))}
       </div>
 
       {/* Информация */}

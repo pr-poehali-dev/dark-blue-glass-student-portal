@@ -3,7 +3,6 @@ import { useAuth } from "@/hooks/useAuth";
 import LoginPage from "@/components/LoginPage";
 import RegisterPage from "@/components/RegisterPage";
 import Dashboard from "@/components/Dashboard";
-import AdminPage from "@/pages/AdminPage";
 import Icon from "@/components/ui/icon";
 
 type Screen = "login" | "register";
@@ -24,9 +23,6 @@ export default function Index() {
   }
 
   if (user) {
-    if (user.role === "admin") {
-      return <AdminPage onLogout={logout} />;
-    }
     return <Dashboard user={user} onLogout={logout} />;
   }
 

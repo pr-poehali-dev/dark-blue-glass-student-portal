@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import Icon from "@/components/ui/icon";
 import { useWorks, Work } from "@/hooks/useWorks";
+import { useSubjects } from "@/hooks/useSchedule";
 
 const typeIcon: Record<string, string> = {
   pdf: "FileText", zip: "FolderArchive", rar: "FolderArchive", "7z": "FolderArchive",
@@ -25,26 +26,38 @@ const statusMap: Record<Work["status"], { label: string; color: string }> = {
   uploaded:  { label: "Загружено",   color: "bg-white/5 text-white/50 border-white/10" },
   reviewing: { label: "На проверке", color: "bg-yellow-500/10 text-yellow-300 border-yellow-500/30" },
   accepted:  { label: "Принято",     color: "bg-green-500/10 text-green-300 border-green-500/30" },
+  rejected:  { label: "Отклонено",   color: "bg-red-500/10 text-red-300 border-red-500/30" },
 };
 
-const STATUS_CYCLE: Work["status"][] = ["uploaded", "reviewing", "accepted"];
+const STATUS_CYCLE: Work["status"][] = ["uploaded", "reviewing", "accepted", "rejected"];
 
 export default function WorksTab() {
   const { works, loading, error, uploadWorks, updateStatus, deleteWork, downloadUrl } = useWorks();
+  const { subjects } = useSubjects();
   const [dragging, setDragging] = useState(false);
-  const [subject, setSubject] = useState("");
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
+  const [customSubject, setCustomSubject] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const getSubjectInfo = () => {
+    if (selectedSubjectId) {
+      const s = subjects.find((x) => String(x.id) === selectedSubjectId);
+      return { name: s?.name ?? "Без предмета", id: s?.id ?? null };
+    }
+    return { name: customSubject.trim() || "Без предмета", id: null };
+  };
+
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
-    const sub = subject.trim() || "Без предмета";
+    const { name, id } = getSubjectInfo();
     setUploading(true);
     setUploadError("");
     try {
-      await uploadWorks(Array.from(files), sub);
-      setSubject("");
+      await uploadWorks(Array.from(files), name, id);
+      setSelectedSubjectId("");
+      setCustomSubject("");
     } catch (e: unknown) {
       setUploadError(e instanceof Error ? e.message : "Ошибка загрузки");
     } finally {
@@ -65,18 +78,44 @@ export default function WorksTab() {
         <p className="text-muted-foreground text-sm">{works.length} файлов загружено</p>
       </div>
 
-      {/* Поле предмета */}
+      {/* Выбор предмета */}
       <div className="mb-3">
-        <div className="relative">
-          <Icon name="BookOpen" size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        {subjects.length > 0 ? (
+          <div className="relative">
+            <Icon name="BookOpen" size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <select
+              value={selectedSubjectId}
+              onChange={(e) => setSelectedSubjectId(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-blue-500/60 transition-all appearance-none [color-scheme:dark]"
+            >
+              <option value="">— Выбрать предмет —</option>
+              {subjects.map((s) => (
+                <option key={s.id} value={String(s.id)}>{s.name}</option>
+              ))}
+              <option value="__custom">Другой...</option>
+            </select>
+          </div>
+        ) : (
+          <div className="relative">
+            <Icon name="BookOpen" size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="text"
+              value={customSubject}
+              onChange={(e) => setCustomSubject(e.target.value)}
+              placeholder="Предмет (необязательно)"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-blue-500/60 transition-all"
+            />
+          </div>
+        )}
+        {selectedSubjectId === "__custom" && (
           <input
             type="text"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            placeholder="Предмет (необязательно)"
-            className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-blue-500/60 transition-all"
+            value={customSubject}
+            onChange={(e) => setCustomSubject(e.target.value)}
+            placeholder="Введите название предмета"
+            className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-blue-500/60 transition-all mt-2"
           />
-        </div>
+        )}
       </div>
 
       {/* Зона загрузки */}
@@ -152,7 +191,7 @@ export default function WorksTab() {
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-sm font-semibold truncate">{work.name}</p>
                   <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
-                    <span>{work.subject}</span>
+                    <span>{work.subject_name}</span>
                     <span className="text-white/10">·</span>
                     <span>{work.size}</span>
                     <span className="text-white/10">·</span>

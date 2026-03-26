@@ -7,7 +7,7 @@ import WorksTab from "./dashboard/WorksTab";
 import ProfileTab from "./dashboard/ProfileTab";
 
 interface DashboardProps {
-  user: { name: string; group: string; avatar: string };
+  user: { name: string; group: string; avatar: string; role?: string };
   onLogout: () => void;
 }
 
@@ -26,7 +26,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
 
   const renderTab = () => {
     switch (activeTab) {
-      case "schedule": return <ScheduleTab />;
+      case "schedule": return <ScheduleTab group={user.group} />;
       case "notifications": return <NotificationsTab />;
       case "assignments": return <AssignmentsTab />;
       case "works": return <WorksTab />;

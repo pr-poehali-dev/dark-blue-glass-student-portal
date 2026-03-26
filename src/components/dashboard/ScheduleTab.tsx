@@ -1,105 +1,103 @@
-const schedule: Record<string, { time: string; subject: string; teacher: string; room: string; type: string }[]> = {
-  "Понедельник": [
-    { time: "08:00–09:35", subject: "Математический анализ", teacher: "Проф. Иванов А.В.", room: "А-201", type: "Лекция" },
-    { time: "09:45–11:20", subject: "Физика", teacher: "Доц. Петрова М.С.", room: "Б-105", type: "Практика" },
-    { time: "13:00–14:35", subject: "Программирование на Python", teacher: "Ст. пр. Соколов Д.И.", room: "Л-301", type: "Лаб" },
-  ],
-  "Вторник": [
-    { time: "09:45–11:20", subject: "Базы данных", teacher: "Доц. Козлов В.А.", room: "Л-204", type: "Лаб" },
-    { time: "11:30–13:05", subject: "Линейная алгебра", teacher: "Проф. Смирнова Е.П.", room: "А-102", type: "Лекция" },
-  ],
-  "Среда": [
-    { time: "08:00–09:35", subject: "Алгоритмы и структуры данных", teacher: "Доц. Новиков К.Р.", room: "Л-301", type: "Лекция" },
-    { time: "09:45–11:20", subject: "Веб-разработка", teacher: "Ст. пр. Федоров А.М.", room: "Л-205", type: "Лаб" },
-    { time: "14:45–16:20", subject: "Иностранный язык", teacher: "Пр. Белова Т.Н.", room: "К-110", type: "Практика" },
-  ],
-  "Четверг": [
-    { time: "11:30–13:05", subject: "Операционные системы", teacher: "Доц. Морозов С.В.", room: "Л-302", type: "Лекция" },
-    { time: "13:00–14:35", subject: "Математический анализ", teacher: "Проф. Иванов А.В.", room: "А-203", type: "Практика" },
-  ],
-  "Пятница": [
-    { time: "08:00–09:35", subject: "Физика", teacher: "Доц. Петрова М.С.", room: "Б-101", type: "Лекция" },
-    { time: "09:45–11:20", subject: "Программирование на Python", teacher: "Ст. пр. Соколов Д.И.", room: "Л-301", type: "Лаб" },
-  ],
-};
+import { useState } from "react";
+import Icon from "@/components/ui/icon";
+import { useSchedule } from "@/hooks/useSchedule";
+
+interface ScheduleTabProps {
+  group: string;
+}
 
 const typeColors: Record<string, string> = {
-  "Лекция": "bg-blue-500/20 text-blue-300 border-blue-500/30",
+  "Лекция":   "bg-blue-500/20 text-blue-300 border-blue-500/30",
   "Практика": "bg-violet-500/20 text-violet-300 border-violet-500/30",
-  "Лаб": "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+  "Лаб":      "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
 };
 
-const days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница"];
-const today = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"][new Date().getDay()];
+const DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница"];
+const todayName = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"][new Date().getDay()];
 
-export default function ScheduleTab() {
-  const activeDay = days.includes(today) ? today : "Понедельник";
+export default function ScheduleTab({ group }: ScheduleTabProps) {
+  const { lessons, loading, error } = useSchedule(group);
+  const [activeDay, setActiveDay] = useState(DAYS.includes(todayName) ? todayName : "Понедельник");
+
+  const dayLessons = lessons
+    .filter((l) => l.weekday === activeDay)
+    .sort((a, b) => a.time_start.localeCompare(b.time_start));
 
   return (
     <div className="animate-fade-in">
       <div className="mb-6">
         <h2 className="text-2xl font-montserrat font-bold text-white mb-1">Расписание</h2>
-        <p className="text-muted-foreground text-sm">Текущая неделя · Весенний семестр 2026</p>
+        <p className="text-muted-foreground text-sm">Группа {group} · Весенний семестр 2026</p>
       </div>
 
       {/* Дни недели */}
       <div className="flex gap-2 flex-wrap mb-6">
-        {days.map((day) => (
-          <div
+        {DAYS.map((day) => (
+          <button
             key={day}
-            className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all cursor-default ${
+            onClick={() => setActiveDay(day)}
+            className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
               day === activeDay
                 ? "bg-blue-500/20 border-blue-500/40 text-blue-300"
-                : "glass border-white/8 text-muted-foreground"
+                : "glass border-white/8 text-muted-foreground hover:border-white/20 hover:text-white/70"
             }`}
           >
             {day}
-            {day === activeDay && (
+            {day === todayName && (
               <span className="ml-2 w-1.5 h-1.5 rounded-full bg-blue-400 inline-block align-middle" />
             )}
-          </div>
+          </button>
         ))}
       </div>
 
-      {/* Занятия */}
-      <div className="space-y-3">
-        {(schedule[activeDay] || []).map((lesson, i) => (
-          <div
-            key={i}
-            className="glass glass-hover rounded-2xl p-5 flex items-start gap-4 animate-fade-in"
-            style={{ animationDelay: `${i * 0.08}s`, opacity: 0 }}
-          >
-            {/* Время */}
-            <div className="min-w-[90px] text-center">
-              <div className="text-white font-semibold text-sm">{lesson.time.split("–")[0]}</div>
-              <div className="text-muted-foreground text-xs">–{lesson.time.split("–")[1]}</div>
-            </div>
-
-            {/* Разделитель */}
-            <div className="w-px self-stretch bg-white/10 rounded-full" />
-
-            {/* Инфо */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-3 flex-wrap">
-                <h3 className="text-white font-semibold text-sm leading-snug">{lesson.subject}</h3>
-                <span className={`text-xs px-2.5 py-1 rounded-lg border font-medium ${typeColors[lesson.type]}`}>
-                  {lesson.type}
-                </span>
+      {loading ? (
+        <div className="flex items-center justify-center py-16 text-muted-foreground gap-3">
+          <Icon name="Loader2" size={20} className="animate-spin" />
+          <span className="text-sm">Загружаем расписание...</span>
+        </div>
+      ) : error ? (
+        <div className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-4">
+          <Icon name="AlertCircle" size={15} />{error}
+        </div>
+      ) : dayLessons.length === 0 ? (
+        <div className="text-center py-16 text-muted-foreground text-sm">Занятий нет</div>
+      ) : (
+        <div className="space-y-3">
+          {dayLessons.map((lesson, i) => (
+            <div
+              key={lesson.id}
+              className="glass glass-hover rounded-2xl p-5 flex items-start gap-4 animate-fade-in"
+              style={{ animationDelay: `${i * 0.08}s`, opacity: 0 }}
+            >
+              <div className="min-w-[90px] text-center">
+                <div className="text-white font-semibold text-sm">{lesson.time_start}</div>
+                <div className="text-muted-foreground text-xs">–{lesson.time_end}</div>
               </div>
-              <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground flex-wrap">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1 h-1 rounded-full bg-blue-400/60" />
-                  {lesson.teacher}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1 h-1 rounded-full bg-cyan-400/60" />
-                  Ауд. {lesson.room}
-                </span>
+
+              <div className="w-px self-stretch bg-white/10 rounded-full" />
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <h3 className="text-white font-semibold text-sm leading-snug">{lesson.subject}</h3>
+                  <span className={`text-xs px-2.5 py-1 rounded-lg border font-medium ${typeColors[lesson.type] ?? "bg-white/5 text-white/50 border-white/10"}`}>
+                    {lesson.type}
+                  </span>
+                </div>
+                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground flex-wrap">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1 h-1 rounded-full bg-blue-400/60" />
+                    {lesson.teacher}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1 h-1 rounded-full bg-cyan-400/60" />
+                    Ауд. {lesson.room}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

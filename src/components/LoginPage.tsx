@@ -3,9 +3,10 @@ import Icon from "@/components/ui/icon";
 
 interface LoginPageProps {
   onLogin: (user: { name: string; group: string; avatar: string }) => void;
+  onSwitchToRegister: () => void;
 }
 
-export default function LoginPage({ onLogin }: LoginPageProps) {
+export default function LoginPage({ onLogin, onSwitchToRegister }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -141,7 +142,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           <div className="mt-6 pt-6 border-t border-white/8 text-center">
             <p className="text-muted-foreground text-sm">
               Нет аккаунта?{" "}
-              <button className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+              <button onClick={onSwitchToRegister} className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
                 Зарегистрироваться
               </button>
             </p>

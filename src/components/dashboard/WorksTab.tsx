@@ -12,30 +12,59 @@ interface Work {
 }
 
 const initialWorks: Work[] = [
-  { id: 1, name: "Курсовая_БД_Морозов.pdf", subject: "Базы данных", size: "2.4 МБ", type: "pdf", date: "20 марта 2026", status: "reviewing" },
-  { id: 2, name: "Лаб5_Python_Морозов.zip", subject: "Программирование", size: "856 КБ", type: "zip", date: "15 марта 2026", status: "accepted" },
-  { id: 3, name: "Реферат_ОС_v2.docx", subject: "Операционные системы", size: "320 КБ", type: "docx", date: "10 марта 2026", status: "accepted" },
+  {
+    id: 1,
+    name: "Курсовая_БД_Морозов.pdf",
+    subject: "Базы данных",
+    size: "2.4 МБ",
+    type: "pdf",
+    date: "20 марта 2026",
+    status: "reviewing",
+  },
+  {
+    id: 2,
+    name: "Лаб5_Python_Морозов.zip",
+    subject: "Программирование",
+    size: "856 КБ",
+    type: "zip",
+    date: "15 марта 2026",
+    status: "accepted",
+  },
+  {
+    id: 3,
+    name: "Реферат_ОС_v2.docx",
+    subject: "Операционные системы",
+    size: "320 КБ",
+    type: "docx",
+    date: "10 марта 2026",
+    status: "accepted",
+  },
 ];
 
 const typeIcon: Record<string, string> = {
-  pdf: "FileText", zip: "FolderArchive", docx: "FileText",
-  pptx: "Presentation", xlsx: "Sheet", jpg: "Image", png: "Image",
+  pdf: "FileText",
+  zip: "FolderArchive",
+  docx: "FileText",
+  pptx: "Presentation",
+  xlsx: "Sheet",
+  jpg: "Image",
+  png: "Image",
 };
 
-const typeStyle: Record<string, string> = {
-  pdf: "text-red-600 bg-red-50 border-red-100",
-  zip: "text-yellow-600 bg-yellow-50 border-yellow-100",
-  docx: "text-blue-600 bg-blue-50 border-blue-100",
-  pptx: "text-orange-600 bg-orange-50 border-orange-100",
-  xlsx: "text-green-600 bg-green-50 border-green-100",
-  jpg: "text-purple-600 bg-purple-50 border-purple-100",
-  png: "text-purple-600 bg-purple-50 border-purple-100",
+const typeColor: Record<string, string> = {
+  pdf: "text-red-400 bg-red-500/10 border-red-500/20",
+  zip: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+  docx: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+  pptx: "text-orange-400 bg-orange-500/10 border-orange-500/20",
+  xlsx: "text-green-400 bg-green-500/10 border-green-500/20",
+  jpg: "text-purple-400 bg-purple-500/10 border-purple-500/20",
+  png: "text-purple-400 bg-purple-500/10 border-purple-500/20",
 };
 
 const statusMap = {
-  uploaded: { label: "Загружено", color: "bg-gray-50 text-gray-600 border-gray-200" },
-  reviewing: { label: "На проверке", color: "bg-yellow-50 text-yellow-700 border-yellow-200" },
-  accepted: { label: "Принято", color: "bg-green-50 text-green-700 border-green-200" },
+  uploaded: { label: "Загружено", color: "text-blue-300 bg-blue-500/10 border-blue-500/25" },
+  reviewing: { label: "На проверке", color: "text-yellow-300 bg-yellow-500/10 border-yellow-500/25" },
+  accepted: { label: "Принято", color: "text-green-300 bg-green-500/10 border-green-500/25" },
 };
 
 export default function WorksTab() {
@@ -65,83 +94,92 @@ export default function WorksTab() {
   return (
     <div className="animate-fade-in">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-0.5">Мои работы</h2>
-        <p className="text-gray-400 text-sm">{works.length} файлов загружено</p>
+        <h2 className="text-2xl font-montserrat font-bold text-white mb-1">Мои работы</h2>
+        <p className="text-muted-foreground text-sm">Загруженные файлы и проекты — {works.length} файлов</p>
       </div>
 
       {/* Зона загрузки */}
       <div
-        className={`rounded-2xl border-2 border-dashed transition-all duration-200 mb-5 cursor-pointer ${
+        className={`relative rounded-2xl border-2 border-dashed transition-all duration-300 mb-6 cursor-pointer ${
           dragging
-            ? "border-blue-400 bg-blue-50"
-            : "border-gray-200 hover:border-blue-300 hover:bg-blue-50/40"
+            ? "border-blue-400/60 bg-blue-500/10"
+            : "border-white/15 hover:border-blue-400/40 hover:bg-white/5"
         }`}
         onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
         onDragLeave={() => setDragging(false)}
         onDrop={(e) => { e.preventDefault(); setDragging(false); handleFiles(e.dataTransfer.files); }}
         onClick={() => inputRef.current?.click()}
       >
-        <input ref={inputRef} type="file" multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
-        <div className="py-8 flex flex-col items-center gap-3">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center border transition-all ${
-            dragging ? "bg-blue-100 border-blue-200" : "bg-gray-50 border-gray-200"
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          className="hidden"
+          onChange={(e) => handleFiles(e.target.files)}
+        />
+        <div className="py-10 flex flex-col items-center gap-3">
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+            dragging ? "bg-blue-500/20 scale-110" : "glass"
           }`}>
-            <Icon name="Upload" size={22} className={dragging ? "text-blue-600" : "text-gray-400"} />
+            <Icon name="Upload" size={24} className={dragging ? "text-blue-400" : "text-muted-foreground"} />
           </div>
           <div className="text-center">
-            <p className="text-gray-700 font-semibold text-sm">
-              {dragging ? "Отпустите для загрузки" : "Перетащите файлы сюда"}
+            <p className="text-white font-medium text-sm">
+              {dragging ? "Отпустите файл для загрузки" : "Перетащите файлы или нажмите для выбора"}
             </p>
-            <p className="text-gray-400 text-xs mt-0.5">или нажмите для выбора · PDF, DOCX, ZIP и другие форматы</p>
+            <p className="text-muted-foreground text-xs mt-1">PDF, DOCX, ZIP, PNG, JPG — любые форматы</p>
           </div>
           {!dragging && (
-            <button className="px-4 py-1.5 rounded-lg text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all">
+            <button className="px-5 py-2 rounded-xl text-sm font-medium text-white border border-blue-500/40 bg-blue-500/15 hover:bg-blue-500/25 transition-all">
               Выбрать файлы
             </button>
           )}
         </div>
       </div>
 
-      {/* Список */}
-      <div className="space-y-2">
+      {/* Список файлов */}
+      <div className="space-y-3">
         {works.map((work, i) => {
           const ext = work.type;
           const iconName = typeIcon[ext] || "File";
-          const colorClass = typeStyle[ext] || "text-gray-500 bg-gray-50 border-gray-100";
+          const colorClass = typeColor[ext] || "text-gray-400 bg-gray-500/10 border-gray-500/20";
 
           return (
             <div
               key={work.id}
-              className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-3.5 card-clean-hover animate-fade-in"
-              style={{ animationDelay: `${i * 0.05}s`, opacity: 0 }}
+              className="glass glass-hover rounded-2xl p-4 flex items-center gap-4 animate-fade-in"
+              style={{ animationDelay: `${i * 0.06}s`, opacity: 0 }}
             >
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 border ${colorClass}`}>
-                <Icon name={iconName} fallback="File" size={16} />
+              {/* Иконка файла */}
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border ${colorClass}`}>
+                <Icon name={iconName} fallback="File" size={18} />
               </div>
 
+              {/* Инфо */}
               <div className="flex-1 min-w-0">
-                <p className="text-gray-900 text-sm font-semibold truncate">{work.name}</p>
-                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-400">
+                <p className="text-white text-sm font-medium truncate">{work.name}</p>
+                <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                   <span>{work.subject}</span>
-                  <span className="text-gray-200">·</span>
+                  <span>·</span>
                   <span>{work.size}</span>
-                  <span className="text-gray-200">·</span>
+                  <span>·</span>
                   <span>{work.date}</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <span className={`text-[11px] px-2 py-0.5 rounded-md border font-semibold hidden sm:block ${statusMap[work.status].color}`}>
+              {/* Статус */}
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <span className={`text-xs px-2.5 py-1 rounded-lg border font-medium hidden sm:block ${statusMap[work.status].color}`}>
                   {statusMap[work.status].label}
                 </span>
-                <button className="w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all flex items-center justify-center text-gray-400 hover:text-gray-600">
-                  <Icon name="Download" size={13} />
+                <button className="w-8 h-8 rounded-lg glass hover:bg-white/10 transition-all flex items-center justify-center text-muted-foreground hover:text-white">
+                  <Icon name="Download" size={14} />
                 </button>
                 <button
-                  className="w-8 h-8 rounded-lg hover:bg-red-50 border border-transparent hover:border-red-100 transition-all flex items-center justify-center text-gray-300 hover:text-red-500"
+                  className="w-8 h-8 rounded-lg hover:bg-red-500/10 transition-all flex items-center justify-center text-muted-foreground hover:text-red-400"
                   onClick={() => setWorks((prev) => prev.filter((w) => w.id !== work.id))}
                 >
-                  <Icon name="Trash2" size={13} />
+                  <Icon name="Trash2" size={14} />
                 </button>
               </div>
             </div>

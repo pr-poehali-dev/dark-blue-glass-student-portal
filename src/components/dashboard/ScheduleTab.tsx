@@ -24,9 +24,9 @@ const schedule: Record<string, { time: string; subject: string; teacher: string;
 };
 
 const typeColors: Record<string, string> = {
-  "Лекция": "bg-blue-50 text-blue-700 border-blue-200",
-  "Практика": "bg-violet-50 text-violet-700 border-violet-200",
-  "Лаб": "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Лекция": "bg-blue-500/20 text-blue-300 border-blue-500/30",
+  "Практика": "bg-violet-500/20 text-violet-300 border-violet-500/30",
+  "Лаб": "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
 };
 
 const days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница"];
@@ -38,55 +38,63 @@ export default function ScheduleTab() {
   return (
     <div className="animate-fade-in">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-0.5">Расписание</h2>
-        <p className="text-gray-400 text-sm">Весенний семестр 2026 · текущая неделя</p>
+        <h2 className="text-2xl font-montserrat font-bold text-white mb-1">Расписание</h2>
+        <p className="text-muted-foreground text-sm">Текущая неделя · Весенний семестр 2026</p>
       </div>
 
-      {/* Дни */}
-      <div className="flex gap-1.5 flex-wrap mb-5">
+      {/* Дни недели */}
+      <div className="flex gap-2 flex-wrap mb-6">
         {days.map((day) => (
           <div
             key={day}
-            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border cursor-default transition-all ${
+            className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all cursor-default ${
               day === activeDay
-                ? "bg-blue-700 text-white border-blue-700 shadow-sm"
-                : "bg-white text-gray-500 border-gray-200"
+                ? "bg-blue-500/20 border-blue-500/40 text-blue-300"
+                : "glass border-white/8 text-muted-foreground"
             }`}
           >
             {day}
+            {day === activeDay && (
+              <span className="ml-2 w-1.5 h-1.5 rounded-full bg-blue-400 inline-block align-middle" />
+            )}
           </div>
         ))}
       </div>
 
       {/* Занятия */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         {(schedule[activeDay] || []).map((lesson, i) => (
           <div
             key={i}
-            className="bg-white border border-gray-100 rounded-2xl p-5 flex items-start gap-4 card-clean-hover animate-fade-in"
+            className="glass glass-hover rounded-2xl p-5 flex items-start gap-4 animate-fade-in"
             style={{ animationDelay: `${i * 0.08}s`, opacity: 0 }}
           >
             {/* Время */}
-            <div className="min-w-[72px]">
-              <div className="text-gray-900 font-semibold text-sm">{lesson.time.split("–")[0]}</div>
-              <div className="text-gray-400 text-xs mt-0.5">{lesson.time.split("–")[1]}</div>
+            <div className="min-w-[90px] text-center">
+              <div className="text-white font-semibold text-sm">{lesson.time.split("–")[0]}</div>
+              <div className="text-muted-foreground text-xs">–{lesson.time.split("–")[1]}</div>
             </div>
 
-            {/* Вертикальная линия */}
-            <div className="w-px self-stretch bg-gray-100 rounded-full flex-shrink-0" />
+            {/* Разделитель */}
+            <div className="w-px self-stretch bg-white/10 rounded-full" />
 
             {/* Инфо */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-3 flex-wrap">
-                <h3 className="text-gray-900 font-semibold text-sm">{lesson.subject}</h3>
-                <span className={`text-[11px] px-2 py-0.5 rounded-md border font-semibold ${typeColors[lesson.type]}`}>
+                <h3 className="text-white font-semibold text-sm leading-snug">{lesson.subject}</h3>
+                <span className={`text-xs px-2.5 py-1 rounded-lg border font-medium ${typeColors[lesson.type]}`}>
                   {lesson.type}
                 </span>
               </div>
-              <div className="flex items-center gap-4 mt-1.5 text-xs text-gray-400">
-                <span>{lesson.teacher}</span>
-                <span className="text-gray-300">·</span>
-                <span>Ауд. {lesson.room}</span>
+              <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground flex-wrap">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1 h-1 rounded-full bg-blue-400/60" />
+                  {lesson.teacher}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1 h-1 rounded-full bg-cyan-400/60" />
+                  Ауд. {lesson.room}
+                </span>
               </div>
             </div>
           </div>

@@ -42,7 +42,7 @@ export default function WorksTab() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const getSubjectInfo = () => {
-    if (selectedSubjectId) {
+    if (selectedSubjectId && selectedSubjectId !== "__custom") {
       const s = subjects.find((x) => String(x.id) === selectedSubjectId);
       return { name: s?.name ?? "Без предмета", id: s?.id ?? null };
     }

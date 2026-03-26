@@ -5,7 +5,7 @@ import WorksTab from "./dashboard/WorksTab";
 import ProfileTab from "./dashboard/ProfileTab";
 
 interface DashboardProps {
-  user: { name: string; group: string; avatar: string; role?: string };
+  user: { id?: number; name: string; group: string; email?: string; avatar: string };
   onLogout: () => void;
 }
 
